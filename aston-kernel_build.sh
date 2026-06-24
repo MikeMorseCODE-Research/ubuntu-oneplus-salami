@@ -1,6 +1,14 @@
 cd $1
 git clone https://github.com/jiganomegsdfdf/aston-mainline.git --depth 1 linux --branch aston-$2
 cd linux
+cp $1/sm8550-oneplus-salami.dts $1/linux/arch/arm64/boot/dts/qcom/sm8550-oneplus-salami.dts
+python3 -c "
+path='$1/linux/arch/arm64/boot/dts/qcom/Makefile'
+content=open(path).read()
+if 'salami' not in content:
+    content=content.replace('sm8550-oneplus-aston.dtb', 'sm8550-oneplus-aston.dtb\ndtb-\$(CONFIG_ARCH_QCOM) += sm8550-oneplus-salami.dtb')
+    open(path,'w').write(content)
+"
 make -j$(nproc) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig sm8550.config
 make -j$(nproc) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
 _kernel_version="$(make kernelrelease -s)"
@@ -27,3 +35,7 @@ cd $1
 rm -rf linux
 
 dpkg-deb --build --root-owner-group linux-oneplus-aston
+
+cat $1/linux/arch/arm64/boot/Image $1/linux/arch/arm64/boot/dts/qcom/sm8550-oneplus-salami.dtb > $1/linux/Image_w_dtb
+gzip Image_w_dtb
+$1/mkbootimg --header_version 4 --base 0x0 --os_version 15.0.0 --os_patch_level 2025-02 --kernel $1/linux/Image_w_dtb.gz -o $1/boot_salami_8G.img

@@ -37,6 +37,12 @@ jobs:
           name: boot-oneplus-aston_${{ matrix.version }}_12G_A15.img
           path: ${{ github.workspace }}/boot12G.img
 
+
+      - name: Upload salami 8G boot.img
+        uses: actions/upload-artifact@v4
+        with:
+          name: boot-oneplus-salami_${{ matrix.version }}_8G.img
+          path: ${{ github.workspace }}/boot_salami_8G.img
       - name: Upload 16G RAM A14 boot.img
         uses: actions/upload-artifact@v4
         with:
