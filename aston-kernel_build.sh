@@ -9,16 +9,7 @@ if 'salami' not in content:
     content=content.replace('sm8550-oneplus-aston.dtb', 'sm8550-oneplus-aston.dtb\ndtb-\$(CONFIG_ARCH_QCOM) += sm8550-oneplus-salami.dtb')
     open(path,'w').write(content)
 "
-make -j$(nproc) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig sm8550.config
-cat >> $1/linux/arch/arm64/configs/sm8550.config << 'EXTRACONF'
-CONFIG_USB_GADGET=y
-CONFIG_USB_LIBCOMPOSITE=y
-CONFIG_USB_G_SERIAL=y
-CONFIG_USB_CONFIGFS=y
-CONFIG_USB_CONFIGFS_SERIAL=y
-CONFIG_USB_CONFIGFS_ACM=y
-CONFIG_SERIAL_CONSOLE=y
-EXTRACONF
+cat $1/sm8550-extra.config >> $1/linux/arch/arm64/configs/sm8550.config
 make -j$(nproc) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig sm8550.config
 make -j$(nproc) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
 _kernel_version="$(make kernelrelease -s)"
