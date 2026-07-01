@@ -34,7 +34,7 @@ rm $1/linux-oneplus-aston/usr/lib/modules/**/build
 
 cat $1/linux/arch/arm64/boot/Image $1/linux/arch/arm64/boot/dts/qcom/sm8550-oneplus-salami.dtb > $1/linux/Image_w_dtb
 gzip -f $1/linux/Image_w_dtb
-$1/mkbootimg --header_version 4 --base 0x0 --os_version 15.0.0 --os_patch_level 2025-02 --kernel $1/linux/Image_w_dtb.gz --cmdline "earlycon=msm_geni_serial,0x994000 console=ttyMSM0,115200n8 rw loglevel=8 androidboot.selinux=permissive" -o $1/boot_salami_8G.img
+$1/mkbootimg --header_version 4 --base 0x0 --os_version 15.0.0 --os_patch_level 2025-02 --kernel $1/linux/Image_w_dtb.gz --cmdline "earlycon=msm_geni_serial,0x994000 console=ttyMSM0,115200n8 rw loglevel=8 androidboot.selinux=permissive root=/dev/disk/by-partlabel/userdata rootfstype=ext4 rootwait" -o $1/boot_salami_8G.img
 cd $1
 rm -rf linux
 
