@@ -144,7 +144,7 @@ jobs:
           path: ${{ github.workspace }}/firmware-oneplus-aston-a14.deb
 
   rootfs-packager:
-    needs: [kernel, alsa, firmware-a14, firmware-a15]
+    needs: [kernel, alsa, firmware-a14, firmware-a15, firmware-salami]
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 10
     strategy:
@@ -179,6 +179,42 @@ jobs:
           path: rootfs.7z
           compression-level: 0
           
+
+  rootfs-packager-salami:
+    needs: [kernel, alsa, firmware-salami]
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        desktop: [ubuntu-desktop]
+        kernel: [6.14]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: between_${{ matrix.desktop }}*
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: alsa-oneplus-aston*
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: firmware-oneplus-salami*
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: linux-oneplus-aston_${{ matrix.kernel }}
+      - name: Install Dependencies
+        run: sudo apt update && sudo apt install unzip 7zip bash tar git wget dpkg
+
+      - name: Package rootfs
+        run: sudo sh salami-rootfs_package.sh ${{ github.workspace }}
+
+      - name: Upload rootfs.7z
+        uses: actions/upload-artifact@v4
+        with:
+          name: rootfs_${{ matrix.desktop }}_${{ matrix.kernel }}_salami
+          path: rootfs.7z
+          compression-level: 0
+
   cleaner:
     runs-on: ubuntu-24.04-arm
     needs: rootfs-packager
