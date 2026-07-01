@@ -105,6 +105,25 @@ jobs:
           name: firmware-oneplus-aston-a15
           path: ${{ github.workspace }}/firmware-oneplus-aston-a15.deb
 
+
+  firmware-salami:
+    needs: rootfs
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: sudo apt update && sudo apt install gcc make git wget dpkg
+
+      - name: Squash firmwares to .mbn
+        run: sudo sh salami-fw_squasher.sh ${{ github.workspace }}
+
+      - name: Upload firmware.deb
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-oneplus-salami
+          path: ${{ github.workspace }}/firmware-oneplus-salami.deb
   firmware-a14:
     needs: rootfs
     runs-on: ubuntu-latest
